@@ -12,6 +12,8 @@ class Trivia extends Component {
     isEnd: false,
     prevQuestions: [],
     disable: true,
+    submitted: false,
+    isCorrect: false,
   }
 
   loadTrivia = () => {
@@ -45,16 +47,9 @@ class Trivia extends Component {
   //proceed to the next question relative to starting point
   nextQuestion = () => {
     // push question into the prevQuestions
-    const { prevQuestions, userAnswer, answer, score } = this.state;
+    const { prevQuestions } = this.state;
 
     prevQuestions.push(this.state.currentQuestion + 1);
-
-    //increment the score
-    if (userAnswer === answer) {
-      this.setState({
-        score: score + 1,
-      })
-    }
 
     //need to check if currentQuestion + 1 will go out of bounds
     //if at the end of the json data, set current question to 0th index
@@ -62,11 +57,13 @@ class Trivia extends Component {
       this.setState({
         currentQuestion: 0,
         counter: this.state.counter + 1,
+        isCorrect: false,
       })
     } else {
       this.setState({
         currentQuestion: this.state.currentQuestion + 1,
         counter: this.state.counter + 1,
+        isCorrect: false,
       })
     }
   }
@@ -98,6 +95,7 @@ class Trivia extends Component {
           questions: data[currentQuestion].question,
           answer: data[currentQuestion].correct,
           options: choices,
+          submitted: false,
         }
       })
     }
@@ -108,6 +106,24 @@ class Trivia extends Component {
       userAnswer: answer,
       disable: false,
     })
+  }
+
+  confirmAnswer = () =>{
+    const { userAnswer, answer, score, submitted} = this.state;
+
+    //increment the score if correct
+    if(userAnswer !== answer){
+      console.log('incorrect!')
+      this.setState({
+        submitted: true,
+      })
+    } else {
+      this.setState({
+        score: score + 1,
+        submitted: true,
+        isCorrect: true,
+      })
+    }
   }
 
   finishHandler = () => {
@@ -132,7 +148,9 @@ class Trivia extends Component {
   }
 
   render() {
-    const { questions, options, userAnswer, isEnd, score, disable, counter } = this.state;
+    const { questions, options, userAnswer, isEnd, score, disable, counter, answer, submitted } = this.state;
+
+    const isRight = this.state.isCorrect;
 
     //check if the quiz is over
     if (isEnd) {
@@ -150,25 +168,35 @@ class Trivia extends Component {
         <span>{`Question ${counter + 1} of 10`}</span>
         {options.map((option, key) => (
           <p
-            className={`ui floating message options ${userAnswer === option ? "selected" : null}`}
+            className={`ui floating message options 
+              ${userAnswer === option ? "selected" : null}
+              ${answer === option ? "correct" : null}`}
             key={key}
             onClick={() => this.checkAnswer(option)}
+            style={{border: isRight ? '2px solid green': '2px solid #5a8bbb'}}
           >
             {option}
           </p>
         ))}
 
-        {/* show next button when less than 10 */}
-        {counter < 9 &&
+        {/* when submit is clicked, it will check if answer is correct */}
+        {counter < 19 && <button
+          disabled={disable}
+          className='ui teal button submit'
+          onClick={this.confirmAnswer}
+        >Submit</button>}
+
+        {/* after submit is clicked, show next button when less than 10 */}
+        {counter < 9 && submitted === true &&
           <button
             disabled={disable}
-            className='ui teal button'
+            className='ui teal button next'
             onClick={this.nextQuestion}>Next</button>}
         {/* show finish button at last question */}
         {counter === 9 &&
           <button
             disabled={disable}
-            className='ui teal button'
+            className='ui teal button finish'
             onClick={this.finishHandler}
           >Finish</button>}
 
