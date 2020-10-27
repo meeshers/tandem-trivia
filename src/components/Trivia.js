@@ -17,11 +17,11 @@ class Trivia extends Component {
   loadTrivia = () => {
     const { prevQuestions } = this.state;
     //randomize the starting question
-    const random = Math.floor(Math.random() * data.length -1);
-    
+    const random = Math.floor(Math.random() * (data.length -1));
     // need to combine incorrect + correct into a single array
     const choices = data[random].incorrect;
     choices.push(data[random].correct);
+    this.shuffleOptions(choices);
 
     // push the question into previous questions to prevent it from being asked again
     prevQuestions.push(data[random]);
@@ -47,21 +47,21 @@ class Trivia extends Component {
     // push question into the prevQuestions
     const { prevQuestions, userAnswer, answer, score } = this.state;
 
-    prevQuestions.push(this.state.currentQuestion +1);
+    prevQuestions.push(this.state.currentQuestion + 1);
 
     //increment the score
-    if(userAnswer === answer){
+    if (userAnswer === answer) {
       this.setState({
         score: score + 1,
       })
     }
-    
+
     //need to check if currentQuestion + 1 will go out of bounds
     //if at the end of the json data, set current question to 0th index
-    if(this.state.currentQuestion + 1 === data.length){
+    if (this.state.currentQuestion + 1 === data.length) {
       this.setState({
         currentQuestion: 0,
-        counter: this.state.counter +1,
+        counter: this.state.counter + 1,
       })
     } else {
       this.setState({
@@ -73,10 +73,10 @@ class Trivia extends Component {
 
   //check if component updated
   componentDidUpdate(prevProps, prevState) {
+    console.log(this.state.score)
     const { currentQuestion } = this.state;
 
     const choices = data[currentQuestion].incorrect;
-
     // this logic will prevent the correct answer from being appended every time component is updated on every user click
     let update = true;
     for (let i = 0; i < choices.length; i++) {
@@ -86,7 +86,10 @@ class Trivia extends Component {
     }
     if (update === true) {
       choices.push(data[currentQuestion].correct);
+      this.shuffleOptions(choices);
     }
+
+    
 
     if (this.state.currentQuestion !== prevState.currentQuestion) {
       this.setState(() => {
@@ -116,11 +119,16 @@ class Trivia extends Component {
     }
 
     //check if the last answer is correct because finish is different from nextQuestion
-    if(this.state.userAnswer === this.state.answer){
+    if (this.state.userAnswer === this.state.answer) {
       this.setState({
-        score: this.state.score +1,
+        score: this.state.score + 1,
       })
     }
+  }
+
+  //shuffle the answers
+  shuffleOptions = arr => {
+    arr.sort(() => Math.random() - 0.5);
   }
 
   render() {
