@@ -9,6 +9,7 @@ A trivia based game created in React that pulls data from an external JSON file.
 * React.js
 * JSX
 * Javascript
+* Semantic UI
 
 ## How to run code
 * Clone the repo.
