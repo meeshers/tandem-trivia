@@ -14,19 +14,22 @@ class Trivia extends Component {
   }
 
   loadTrivia = () => {
-    const { currentQuestion, prevQuestions } = this.state;
+    const { prevQuestions } = this.state;
+    //randomize the starting question
+    const random = Math.floor(Math.random() * data.length -1);
+    
     // need to combine incorrect + correct into a single array
-    const choices = data[currentQuestion].incorrect;
-    choices.push(data[currentQuestion].correct);
+    const choices = data[random].incorrect;
+    choices.push(data[random].correct);
 
     // push the question into previous questions to prevent it from being asked again
-    prevQuestions.push(data[currentQuestion]);
+    prevQuestions.push(data[random]);
 
     this.setState(() => {
       return {
         disable: true,
-        questions: data[currentQuestion].question,
-        answer: data[currentQuestion].correct,
+        questions: data[random].question,
+        answer: data[random].correct,
         options: choices,
       }
     })
@@ -35,15 +38,14 @@ class Trivia extends Component {
   //check if the component mounted
   componentDidMount() {
     this.loadTrivia();
-    //console.log('mounted');
   }
 
   //proceed to the next question
   nextQuestion = () => {
+    const random = Math.floor(Math.random() * data.length -1);
     // push question into the prevQuestions
     const { prevQuestions, userAnswer, answer, score } = this.state;
     prevQuestions.push(data[this.state.currentQuestion + 1]);
-    // console.log(prevQuestions)
 
     //increment the score
     console.log(`intial score: ${score}`)
@@ -60,7 +62,6 @@ class Trivia extends Component {
 
   //check if component updated
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state.score)
     const { currentQuestion } = this.state;
     const choices = data[currentQuestion].incorrect;
 
@@ -85,7 +86,6 @@ class Trivia extends Component {
         }
       })
     }
-    //console.log('updated');
   }
 
   checkAnswer = (answer) => {
@@ -103,7 +103,7 @@ class Trivia extends Component {
       })
     }
 
-    //check if the last answer is correct
+    //check if the last answer is correct because finish is different from nextQuestion
     if(this.state.userAnswer === this.state.answer){
       this.setState({
         score: this.state.score +1,
