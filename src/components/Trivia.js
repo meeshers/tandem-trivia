@@ -10,6 +10,7 @@ class Trivia extends Component {
     score: 0,
     isEnd: false,
     prevQuestions: [],
+    disable: true,
   }
 
   loadTrivia = () => {
@@ -23,6 +24,7 @@ class Trivia extends Component {
 
     this.setState(() => {
       return {
+        disable: true,
         questions: data[currentQuestion].question,
         answer: data[currentQuestion].correct,
         options: choices,
@@ -69,6 +71,7 @@ class Trivia extends Component {
     if (this.state.currentQuestion !== prevState.currentQuestion) {
       this.setState(() => {
         return {
+          disable: true,
           questions: data[currentQuestion].question,
           answer: data[currentQuestion].correct,
           options: choices,
@@ -81,11 +84,12 @@ class Trivia extends Component {
   checkAnswer = (answer) => {
     this.setState({
       userAnswer: answer,
+      disable: false,
     })
   }
 
   finishHandler = () => {
-    if(this.state.currentQuestion === 9) {
+    if (this.state.currentQuestion === 9) {
       this.setState({
         isEnd: true,
       })
@@ -93,9 +97,10 @@ class Trivia extends Component {
   }
 
   render() {
-    const { questions, options, currentQuestion, userAnswer, isEnd, score } = this.state;
+    const { questions, options, currentQuestion, userAnswer, isEnd, score, disable } = this.state;
 
-    if(isEnd){
+    //check if the quiz is over
+    if (isEnd) {
       return (
         <div>
           <h2>GAME OVER!</h2>
@@ -121,13 +126,15 @@ class Trivia extends Component {
         {/* show next button when less than 10 */}
         {currentQuestion < 9 &&
           <button
+            disabled={disable}
             className='ui teal button'
             onClick={this.nextQuestion}>Next</button>}
         {/* show finish button at last question */}
         {currentQuestion === 9 &&
-          <button 
-          className='ui teal button'
-          onClick={this.finishHandler}
+          <button
+            disabled={disable}
+            className='ui teal button'
+            onClick={this.finishHandler}
           >Finish</button>}
 
       </div>
