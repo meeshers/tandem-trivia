@@ -70,7 +70,6 @@ class Trivia extends Component {
 
   //check if component updated
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state.score)
     const { currentQuestion } = this.state;
 
     const choices = data[currentQuestion].incorrect;
