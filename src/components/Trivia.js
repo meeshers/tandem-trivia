@@ -172,17 +172,18 @@ class Trivia extends Component {
           answer={answer}
           checkAnswer={this.checkAnswer}
         />
-        <Answer 
+        <Answer
           answer={answer}
           submitted={submitted}
         />
 
-        {/* when submit is clicked, it will check if answer is correct */}
-        {counter < 10 && <button
-          disabled={disable}
-          className='ui teal button submit'
-          onClick={this.confirmAnswer}
-        >Submit</button>}
+        {/* when submit is clicked, it will check if answer is correct and hide submit button*/}
+        {counter < 10 &&
+          <button
+            disabled={disable}
+            className='ui teal button submit'
+            onClick={this.confirmAnswer}
+          >Submit</button>}
 
 
         {/* after submit is clicked, show next button when less than 10 */}
@@ -191,6 +192,7 @@ class Trivia extends Component {
             disabled={disable}
             className='ui teal button next'
             onClick={this.nextQuestion}>Next</button>}
+
         {/* show finish button at last question */}
         {counter === 9 &&
           <button
