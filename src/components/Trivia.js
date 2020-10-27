@@ -35,16 +35,26 @@ class Trivia extends Component {
 
   nextQuestion = () => {
     // need to check if answers are correct
-    const { userAnswer, answer, score } = this.state;
-    if (userAnswer === answer) {
-      console.log('correct!');
-      this.setState({
-        score: score + 1
-      });
-    } else {
-      console.log('sorry!');
+    this.setState({
+      currentQuestion: this.state.currentQuestion + 1
+    })
+    console.log(this.state.currentQuestion);
+  }
+
+  //check if component updated
+  componentDidUpdate(prevProps, prevState) {
+    const {currentQuestion} = this.state;
+    const choices = data[currentQuestion].incorrect;
+    choices.push(data[currentQuestion].correct);
+    if(this.state.currentQuestion !== prevState.currentQuestion){
+      this.setState(()=>{
+        return {
+          questions: data[currentQuestion].question,
+          answer: data[currentQuestion].correct,
+          options: choices,
+        }
+      })
     }
-    console.log(score);
   }
 
   checkAnswer = (answer) =>{
@@ -58,14 +68,16 @@ class Trivia extends Component {
         <h2>{questions}</h2>
         {options.map((option, key) => (
           <p
-            className='ui floating message'
+            className='ui floating message options'
             key={key}
             onClick={() => this.checkAnswer(option)}
           >
             {option}
           </p>
         ))}
-        <button onClick={this.nextQuestion}>Next</button>
+        <button 
+        className='ui teal button'
+        onClick={this.nextQuestion}>Next</button>
       </div>
     )
   }
