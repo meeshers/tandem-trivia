@@ -3,6 +3,7 @@ import data from '../data/data.json';
 
 class Trivia extends Component {
   state = {
+    counter: 0,
     userAnswer: null,
     currentQuestion: 0,
     options: [],
@@ -28,6 +29,7 @@ class Trivia extends Component {
     this.setState(() => {
       return {
         disable: true,
+        currentQuestion: random,
         questions: data[random].question,
         answer: data[random].correct,
         options: choices,
@@ -40,29 +42,39 @@ class Trivia extends Component {
     this.loadTrivia();
   }
 
-  //proceed to the next question
+  //proceed to the next question relative to starting point
   nextQuestion = () => {
-    const random = Math.floor(Math.random() * data.length -1);
     // push question into the prevQuestions
     const { prevQuestions, userAnswer, answer, score } = this.state;
-    prevQuestions.push(data[this.state.currentQuestion + 1]);
+
+    prevQuestions.push(this.state.currentQuestion +1);
 
     //increment the score
-    console.log(`intial score: ${score}`)
     if(userAnswer === answer){
       this.setState({
         score: score + 1,
       })
     }
     
-    this.setState({
-      currentQuestion: this.state.currentQuestion + 1
-    })
+    //need to check if currentQuestion + 1 will go out of bounds
+    //if at the end of the json data, set current question to 0th index
+    if(this.state.currentQuestion + 1 === data.length){
+      this.setState({
+        currentQuestion: 0,
+        counter: this.state.counter +1,
+      })
+    } else {
+      this.setState({
+        currentQuestion: this.state.currentQuestion + 1,
+        counter: this.state.counter + 1,
+      })
+    }
   }
 
   //check if component updated
   componentDidUpdate(prevProps, prevState) {
     const { currentQuestion } = this.state;
+
     const choices = data[currentQuestion].incorrect;
 
     // this logic will prevent the correct answer from being appended every time component is updated on every user click
@@ -97,7 +109,7 @@ class Trivia extends Component {
 
   finishHandler = () => {
     //check if it reached 10 questions
-    if (this.state.currentQuestion === 9) {
+    if (this.state.counter === 9) {
       this.setState({
         isEnd: true,
       })
@@ -112,7 +124,7 @@ class Trivia extends Component {
   }
 
   render() {
-    const { questions, options, currentQuestion, userAnswer, isEnd, score, disable } = this.state;
+    const { questions, options, userAnswer, isEnd, score, disable, counter } = this.state;
 
     //check if the quiz is over
     if (isEnd) {
@@ -127,7 +139,7 @@ class Trivia extends Component {
     return (
       <div>
         <h2>{questions}</h2>
-        <span>{`Question ${currentQuestion + 1} of 10`}</span>
+        <span>{`Question ${counter + 1} of 10`}</span>
         {options.map((option, key) => (
           <p
             className={`ui floating message options ${userAnswer === option ? "selected" : null}`}
@@ -139,13 +151,13 @@ class Trivia extends Component {
         ))}
 
         {/* show next button when less than 10 */}
-        {currentQuestion < 9 &&
+        {counter < 9 &&
           <button
             disabled={disable}
             className='ui teal button'
             onClick={this.nextQuestion}>Next</button>}
         {/* show finish button at last question */}
-        {currentQuestion === 9 &&
+        {counter === 9 &&
           <button
             disabled={disable}
             className='ui teal button'
