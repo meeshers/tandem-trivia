@@ -8,6 +8,7 @@
 .options:hover {
   background-color: #5a8bbb;
   color: #f1f1f1;
+  cursor: pointer;
 }
 
 .selected {

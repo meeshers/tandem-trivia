@@ -35,25 +35,32 @@ class Trivia extends Component {
   //check if the component mounted
   componentDidMount() {
     this.loadTrivia();
-    console.log('mounted');
+    //console.log('mounted');
   }
 
   //proceed to the next question
   nextQuestion = () => {
     // push question into the prevQuestions
-    const { prevQuestions } = this.state;
+    const { prevQuestions, userAnswer, answer, score } = this.state;
     prevQuestions.push(data[this.state.currentQuestion + 1]);
     // console.log(prevQuestions)
 
-    // need to check if answers are correct
+    //increment the score
+    console.log(`intial score: ${score}`)
+    if(userAnswer === answer){
+      this.setState({
+        score: score + 1,
+      })
+    }
+    
     this.setState({
       currentQuestion: this.state.currentQuestion + 1
     })
-    console.log(this.state.currentQuestion);
   }
 
   //check if component updated
   componentDidUpdate(prevProps, prevState) {
+    console.log(this.state.score)
     const { currentQuestion } = this.state;
     const choices = data[currentQuestion].incorrect;
 
@@ -78,7 +85,7 @@ class Trivia extends Component {
         }
       })
     }
-    console.log('updated');
+    //console.log('updated');
   }
 
   checkAnswer = (answer) => {
@@ -89,9 +96,17 @@ class Trivia extends Component {
   }
 
   finishHandler = () => {
+    //check if it reached 10 questions
     if (this.state.currentQuestion === 9) {
       this.setState({
         isEnd: true,
+      })
+    }
+
+    //check if the last answer is correct
+    if(this.state.userAnswer === this.state.answer){
+      this.setState({
+        score: this.state.score +1,
       })
     }
   }
