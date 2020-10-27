@@ -17,6 +17,7 @@ class Trivia extends Component {
     const choices = data[currentQuestion].incorrect;
     choices.push(data[currentQuestion].correct);
     console.log(choices);
+
     this.setState(() => {
       return {
         questions: data[currentQuestion].question,
@@ -32,15 +33,39 @@ class Trivia extends Component {
     console.log('mounted');
   }
 
+  nextQuestion = () => {
+    // need to check if answers are correct
+    const { userAnswer, answer, score } = this.state;
+    if (userAnswer === answer) {
+      console.log('correct!');
+      this.setState({
+        score: score + 1
+      });
+    } else {
+      console.log('sorry!');
+    }
+    console.log(score);
+  }
+
+  checkAnswer = (answer) =>{
+    console.log(answer);
+  }
+
   render() {
     const { questions, options } = this.state;
     return (
       <div>
         <h2>{questions}</h2>
         {options.map((option, key) => (
-          <p key={key}>{option}</p>
+          <p
+            className='ui floating message'
+            key={key}
+            onClick={() => this.checkAnswer(option)}
+          >
+            {option}
+          </p>
         ))}
-        <button>Submit</button>
+        <button onClick={this.nextQuestion}>Next</button>
       </div>
     )
   }
