@@ -27,4 +27,5 @@ A trivia based game created in React that pulls data from an external JSON file.
 These are features I would like to improve upon in the future:
 * Question randomizer (it currently goes in order based on the random starting point)
 * Applying styles to the multiple choice selection itself to display the correct answer instead of displaying the correct answer in a separate component
+* Learning Jest for testing
 
