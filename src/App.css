@@ -10,7 +10,7 @@
   color: #f1f1f1;
 }
 
-.ui.floating.message.selected {
+.selected {
   background-color: #9cc7f3;
   color: #f1f1f1;
   border: 2px solid #435566;

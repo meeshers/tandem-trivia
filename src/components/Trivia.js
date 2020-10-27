@@ -43,11 +43,22 @@ class Trivia extends Component {
 
   //check if component updated
   componentDidUpdate(prevProps, prevState) {
-    const {currentQuestion} = this.state;
+    const { currentQuestion } = this.state;
     const choices = data[currentQuestion].incorrect;
-    choices.push(data[currentQuestion].correct);
-    if(this.state.currentQuestion !== prevState.currentQuestion){
-      this.setState(()=>{
+    
+    // this logic will prevent the correct answer from being appended every time component is updated on every user click
+    let update = true;
+    for(let i = 0; i < choices.length; i++){
+      if(choices[i] === data[currentQuestion].correct){
+        update = false;
+      }
+    }
+    if(update === true) {
+      choices.push(data[currentQuestion].correct);
+    }
+
+    if (this.state.currentQuestion !== prevState.currentQuestion) {
+      this.setState(() => {
         return {
           questions: data[currentQuestion].question,
           answer: data[currentQuestion].correct,
@@ -55,29 +66,33 @@ class Trivia extends Component {
         }
       })
     }
+    console.log('updated');
   }
 
-  checkAnswer = (answer) =>{
-    console.log(answer);
+  checkAnswer = (answer) => {
+    this.setState({
+      userAnswer: answer,
+    })
   }
 
   render() {
-    const { questions, options } = this.state;
+    const { questions, options, currentQuestion, userAnswer } = this.state;
     return (
       <div>
         <h2>{questions}</h2>
+        <span>{`Question ${currentQuestion +1} of 10`}</span>
         {options.map((option, key) => (
           <p
-            className='ui floating message options'
+            className={`ui floating message options ${userAnswer === option ? "selected" : null}`}
             key={key}
             onClick={() => this.checkAnswer(option)}
           >
             {option}
           </p>
         ))}
-        <button 
-        className='ui teal button'
-        onClick={this.nextQuestion}>Next</button>
+        <button
+          className='ui teal button'
+          onClick={this.nextQuestion}>Next</button>
       </div>
     )
   }
