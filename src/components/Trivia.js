@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import data from '../data/data.json';
+import Question from './Question';
+import Options from './Options';
+import Answer from './Answer';
 
 class Trivia extends Component {
   state = {
@@ -13,13 +16,12 @@ class Trivia extends Component {
     prevQuestions: [],
     disable: true,
     submitted: false,
-    isCorrect: false,
   }
 
   loadTrivia = () => {
     const { prevQuestions } = this.state;
     //randomize the starting question
-    const random = Math.floor(Math.random() * (data.length -1));
+    const random = Math.floor(Math.random() * (data.length - 1));
     // need to combine incorrect + correct into a single array
     const choices = data[random].incorrect;
     choices.push(data[random].correct);
@@ -57,13 +59,11 @@ class Trivia extends Component {
       this.setState({
         currentQuestion: 0,
         counter: this.state.counter + 1,
-        isCorrect: false,
       })
     } else {
       this.setState({
         currentQuestion: this.state.currentQuestion + 1,
         counter: this.state.counter + 1,
-        isCorrect: false,
       })
     }
   }
@@ -86,7 +86,7 @@ class Trivia extends Component {
       this.shuffleOptions(choices);
     }
 
-    
+
 
     if (this.state.currentQuestion !== prevState.currentQuestion) {
       this.setState(() => {
@@ -108,11 +108,11 @@ class Trivia extends Component {
     })
   }
 
-  confirmAnswer = () =>{
-    const { userAnswer, answer, score, submitted} = this.state;
+  confirmAnswer = () => {
+    const { userAnswer, answer, score, submitted } = this.state;
 
     //increment the score if correct
-    if(userAnswer !== answer){
+    if (userAnswer !== answer) {
       console.log('incorrect!')
       this.setState({
         submitted: true,
@@ -121,7 +121,6 @@ class Trivia extends Component {
       this.setState({
         score: score + 1,
         submitted: true,
-        isCorrect: true,
       })
     }
   }
@@ -150,8 +149,6 @@ class Trivia extends Component {
   render() {
     const { questions, options, userAnswer, isEnd, score, disable, counter, answer, submitted } = this.state;
 
-    const isRight = this.state.isCorrect;
-
     //check if the quiz is over
     if (isEnd) {
       return (
@@ -164,27 +161,30 @@ class Trivia extends Component {
 
     return (
       <div>
-        <h2>{questions}</h2>
-        <span>{`Question ${counter + 1} of 10`}</span>
-        {options.map((option, key) => (
-          <p
-            className={`ui floating message options 
-              ${userAnswer === option ? "selected" : null}
-              ${answer === option ? "correct" : null}`}
-            key={key}
-            onClick={() => this.checkAnswer(option)}
-            style={{border: isRight ? '2px solid green': '2px solid #5a8bbb'}}
-          >
-            {option}
-          </p>
-        ))}
+        <Question
+          question={questions}
+          options={options}
+          answer={answer}
+          counter={counter}
+        />
+        <Options
+          options={options}
+          answer={answer}
+          checkAnswer={this.checkAnswer}
+        />
+        <Answer
+          answer={answer}
+          submitted={submitted}
+        />
 
-        {/* when submit is clicked, it will check if answer is correct */}
-        {counter < 19 && <button
-          disabled={disable}
-          className='ui teal button submit'
-          onClick={this.confirmAnswer}
-        >Submit</button>}
+        {/* when submit is clicked, it will check if answer is correct and hide submit button*/}
+        {counter < 10 &&
+          <button
+            disabled={disable}
+            className='ui teal button submit'
+            onClick={this.confirmAnswer}
+          >Submit</button>}
+
 
         {/* after submit is clicked, show next button when less than 10 */}
         {counter < 9 && submitted === true &&
@@ -192,6 +192,7 @@ class Trivia extends Component {
             disabled={disable}
             className='ui teal button next'
             onClick={this.nextQuestion}>Next</button>}
+
         {/* show finish button at last question */}
         {counter === 9 &&
           <button
