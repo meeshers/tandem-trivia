@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import {shallow} from 'enzyme';
 import App from './App';
 
-test.skip('render without crashing', () => {
-  render(<App />);
+it('render without crashing', () => {
+  shallow(<App />);
 });
